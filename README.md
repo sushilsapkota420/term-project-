@@ -1,12 +1,8 @@
-# Rest-api
-
 # CSC 317 Group Project - In-Memory REST API
 
 ## Group Members
-- Member 1: @BigyanShrestha1
-- Member 2: Sushil Sapkota
-  
-
+- Bigyan Shrestha (@BigyanShrestha1)
+- Sushil Sapkota (@sushilsapkota420)
 
 ## Product Description
 Our group sells mystery boxes. Each mystery box has a unique id, a name, a theme, a price, and a stock quantity. This API stores and manages a small in-memory inventory of those boxes.
@@ -21,6 +17,7 @@ Each mystery box object has the following fields:
 - `stock`: number
 
 Example:
+
 ```json
 {
   "id": "box-001",
