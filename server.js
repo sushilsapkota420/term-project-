@@ -1,7 +1,7 @@
 const express = require("express");
 
 const app = express();
-const PORT = process.env.PORT || 3000; 
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -85,15 +85,15 @@ function hasDuplicateMysteryBox(newBox) {
 
 /* ---------------- Routes ---------------- */
 
-// GET / -> return all mystery boxes
-app.get("/", (req, res) => {
-  res.status(200).json(mysteryBoxes);
-});
-
 // HEAD / -> return mystery box count in custom header
 app.head("/", (req, res) => {
   res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
-  res.sendStatus(200);
+  res.status(200).end();
+});
+
+// GET / -> return all mystery boxes
+app.get("/", (req, res) => {
+  res.status(200).json(mysteryBoxes);
 });
 
 // GET /:identifier -> return one mystery box by id or name
