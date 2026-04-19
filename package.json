@@ -1,0 +1,16 @@
+{
+  "name": "mystery-box-rest-api",
+  "version": "1.0.0",
+  "description": "CSC 317 group project in-memory REST API for mystery boxes",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
