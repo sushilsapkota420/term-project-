@@ -32,7 +32,7 @@ let mysteryBoxes = [
 /* ---------------- Helper Functions ---------------- */
 
 function normalizeString(value) {
-  return value.trim().toLowerCase();
+  return String(value).trim().toLowerCase();
 }
 
 function normalizeMysteryBox(box) {
@@ -85,21 +85,20 @@ function hasDuplicateMysteryBox(newBox) {
 
 /* ---------------- Routes ---------------- */
 
-// GET / -> return all mystery boxes
-app.get("/", (req, res) => {
-  res.status(200).json(mysteryBoxes);
-});
-
-// HEAD / -> return mystery box count in custom header
+// HEAD / -> return current count in custom header
 app.head("/", (req, res) => {
   res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
   res.sendStatus(200);
 });
 
-// GET /:identifier -> return one mystery box by id or name
+// GET / -> return all mystery boxes
+app.get("/", (req, res) => {
+  res.status(200).json(mysteryBoxes);
+});
+
+// GET /:identifier -> find by id or name, case-insensitive
 app.get("/:identifier", (req, res) => {
-  const { identifier } = req.params;
-  const box = findMysteryBoxByIdentifier(identifier);
+  const box = findMysteryBoxByIdentifier(req.params.identifier);
 
   if (!box) {
     return res.status(404).json({ error: "not found" });
@@ -128,8 +127,7 @@ app.post("/add", (req, res) => {
 
 // DELETE /:identifier -> delete by id or name
 app.delete("/:identifier", (req, res) => {
-  const { identifier } = req.params;
-  const normalizedIdentifier = normalizeString(identifier);
+  const normalizedIdentifier = normalizeString(req.params.identifier);
 
   const index = mysteryBoxes.findIndex(
     (box) =>
