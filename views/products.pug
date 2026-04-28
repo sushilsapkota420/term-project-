@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  h2 All Mystery Boxes
+  .product-grid
+    each box in boxes
+      .card
+        h3= box.name
+        p
+          strong ID:
+          |  #{box.id}
+        p
+          strong Theme:
+          |  #{box.theme}
+        p
+          strong Price:
+          |  $#{box.price}
+        p
+          strong Stock:
+          |  #{box.stock}
+        a.button(href=`/products/${box.id}`) View Details

@@ -1,0 +1,29 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title #{pageTitle} | Mystery Box Store
+    link(rel="stylesheet" href="/css/style.css")
+  body
+    nav.navbar
+      .container
+        h1.logo Mystery Box Store
+        ul.nav-links
+          li
+            a(href="/") Home
+          li
+            a(href="/products") Products
+          li
+            a(href="/cart") Cart
+          li
+            a(href="/login") Login
+          li
+            a(href="/profile") Profile
+
+    main.container
+      block content
+
+    footer.footer
+      .container
+        p #{groupName} © #{year}

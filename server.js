@@ -1,9 +1,15 @@
 const express = require("express");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
 let mysteryBoxes = [
   {
@@ -32,7 +38,7 @@ let mysteryBoxes = [
 /* ---------------- Helper Functions ---------------- */
 
 function normalizeString(value) {
-  return String(value).trim().toLowerCase();
+  return value.trim().toLowerCase();
 }
 
 function normalizeMysteryBox(box) {
@@ -83,22 +89,88 @@ function hasDuplicateMysteryBox(newBox) {
   );
 }
 
-/* ---------------- Routes ---------------- */
+/* ---------------- View Routes ---------------- */
 
-// HEAD / -> return current count in custom header
-app.head("/", (req, res) => {
-  res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
-  res.sendStatus(200);
+app.get("/", (req, res) => {
+  res.render("home", {
+    pageTitle: "Home",
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
 });
 
-// GET / -> return all mystery boxes
-app.get("/", (req, res) => {
+app.get("/products", (req, res) => {
+  res.render("products", {
+    pageTitle: "Products",
+    boxes: mysteryBoxes,
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
+});
+
+app.get("/products/:identifier", (req, res) => {
+  const { identifier } = req.params;
+  const box = findMysteryBoxByIdentifier(identifier);
+
+  if (!box) {
+    return res.status(404).render("404", {
+      pageTitle: "404 Not Found",
+      identifier,
+      groupName: "Bigyan & Sushil",
+      year: new Date().getFullYear(),
+    });
+  }
+
+  return res.render("product-detail", {
+    pageTitle: box.name,
+    box,
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
+});
+
+app.get("/login", (req, res) => {
+  res.render("login", {
+    pageTitle: "Login",
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
+});
+
+app.post("/login", (req, res) => {
+  res.redirect("/");
+});
+
+app.get("/profile", (req, res) => {
+  res.render("profile", {
+    pageTitle: "Profile",
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
+});
+
+app.get("/cart", (req, res) => {
+  res.render("cart", {
+    pageTitle: "Cart",
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
+});
+
+/* ---------------- API Routes ---------------- */
+
+app.head("/api/products", (req, res) => {
+  res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
+  res.status(200).end();
+});
+
+app.get("/api/products", (req, res) => {
   res.status(200).json(mysteryBoxes);
 });
 
-// GET /:identifier -> find by id or name, case-insensitive
-app.get("/:identifier", (req, res) => {
-  const box = findMysteryBoxByIdentifier(req.params.identifier);
+app.get("/api/products/:identifier", (req, res) => {
+  const { identifier } = req.params;
+  const box = findMysteryBoxByIdentifier(identifier);
 
   if (!box) {
     return res.status(404).json({ error: "not found" });
@@ -107,8 +179,7 @@ app.get("/:identifier", (req, res) => {
   return res.status(200).json(box);
 });
 
-// POST /add -> validate, normalize, prevent duplicates
-app.post("/add", (req, res) => {
+app.post("/api/products/add", (req, res) => {
   const incomingBox = req.body;
 
   if (!isValidMysteryBox(incomingBox)) {
@@ -125,9 +196,9 @@ app.post("/add", (req, res) => {
   return res.status(201).json(normalizedBox);
 });
 
-// DELETE /:identifier -> delete by id or name
-app.delete("/:identifier", (req, res) => {
-  const normalizedIdentifier = normalizeString(req.params.identifier);
+app.delete("/api/products/:identifier", (req, res) => {
+  const { identifier } = req.params;
+  const normalizedIdentifier = normalizeString(identifier);
 
   const index = mysteryBoxes.findIndex(
     (box) =>
@@ -140,6 +211,15 @@ app.delete("/:identifier", (req, res) => {
 
   mysteryBoxes.splice(index, 1);
   return res.sendStatus(204);
+});
+
+app.use((req, res) => {
+  res.status(404).render("404", {
+    pageTitle: "404 Not Found",
+    identifier: req.originalUrl,
+    groupName: "Bigyan & Sushil",
+    year: new Date().getFullYear(),
+  });
 });
 
 app.listen(PORT, () => {
