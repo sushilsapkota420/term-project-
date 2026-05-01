@@ -1,6 +1,9 @@
 extends layout
 
 block content
-  h2 404 - Not Found
-  p Sorry, we could not find: #{identifier}
-  a.button(href="/products") Back to Products
+  section.message-card
+    span.section-tag Error
+    h2 404 — Not Found
+    p Sorry, we could not find "#{identifier}".
+    p Try browsing the full product catalog instead.
+    a.btn.btn-primary(href="/products") Return to Products

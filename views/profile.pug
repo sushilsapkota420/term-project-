@@ -1,17 +1,24 @@
 extends layout
 
 block content
-  h2 User Profile
-  .card
-    p
-      strong Name:
-      |  Alex Mystery
-    p
-      strong Email:
-      |  alex@example.com
-    p
-      strong Member Since:
-      |  January 2025
-    p
-      strong Favorite Theme:
-      |  Anime
+  section.profile-layout
+    .profile-card-large
+      .profile-header
+        .avatar AM
+        div
+          h2 Alex Mystery
+          p Premium member and mystery box collector
+
+      .profile-info-grid
+        .info-box
+          span.label Email
+          p alexmystery@example.com
+        .info-box
+          span.label Member Since
+          p January 2025
+        .info-box
+          span.label Favorite Theme
+          p Gaming
+        .info-box
+          span.label Membership Tier
+          p Gold Explorer

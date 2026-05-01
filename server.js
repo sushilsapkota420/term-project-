@@ -89,85 +89,91 @@ function hasDuplicateMysteryBox(newBox) {
   );
 }
 
-/* ---------------- View Routes ---------------- */
+/* ---------------- View Routes (HTML) ---------------- */
 
+// Home page
 app.get("/", (req, res) => {
-  res.render("home", {
-    pageTitle: "Home",
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
-  });
+  res.render("home", { currentYear: new Date().getFullYear() });
 });
 
+// Products page
 app.get("/products", (req, res) => {
   res.render("products", {
-    pageTitle: "Products",
-    boxes: mysteryBoxes,
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    title: "All Products",
+    products: mysteryBoxes,
+    currentYear: new Date().getFullYear(),
   });
 });
 
+// Product detail page
 app.get("/products/:identifier", (req, res) => {
   const { identifier } = req.params;
   const box = findMysteryBoxByIdentifier(identifier);
 
   if (!box) {
     return res.status(404).render("404", {
-      pageTitle: "404 Not Found",
+      title: "404 - Not Found",
       identifier,
-      groupName: "Bigyan & Sushil",
-      year: new Date().getFullYear(),
+      currentYear: new Date().getFullYear(),
     });
   }
 
   return res.render("product-detail", {
-    pageTitle: box.name,
-    box,
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    title: box.name,
+    product: box,
+    currentYear: new Date().getFullYear(),
   });
 });
 
+// Login page
 app.get("/login", (req, res) => {
   res.render("login", {
-    pageTitle: "Login",
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    title: "Login",
+    currentYear: new Date().getFullYear(),
   });
 });
 
+// Handle login form submission (dummy only)
 app.post("/login", (req, res) => {
-  res.redirect("/");
+  const { username } = req.body;
+
+  res.render("login-success", {
+    title: "Login Success",
+    username: username || "guest",
+    currentYear: new Date().getFullYear(),
+  });
 });
 
+// Static profile page
 app.get("/profile", (req, res) => {
   res.render("profile", {
-    pageTitle: "Profile",
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    title: "Profile",
+    currentYear: new Date().getFullYear(),
   });
 });
 
+// Static cart page
 app.get("/cart", (req, res) => {
   res.render("cart", {
-    pageTitle: "Cart",
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    title: "Shopping Cart",
+    currentYear: new Date().getFullYear(),
   });
 });
 
-/* ---------------- API Routes ---------------- */
+/* ---------------- API Routes (JSON) ---------------- */
 
+// HEAD /api/products -> return mystery box count in custom header
 app.head("/api/products", (req, res) => {
   res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
   res.status(200).end();
 });
 
+// GET /api/products -> return all mystery boxes
 app.get("/api/products", (req, res) => {
   res.status(200).json(mysteryBoxes);
 });
 
+// GET /api/products/:identifier -> return one mystery box by id or name
 app.get("/api/products/:identifier", (req, res) => {
   const { identifier } = req.params;
   const box = findMysteryBoxByIdentifier(identifier);
@@ -179,6 +185,7 @@ app.get("/api/products/:identifier", (req, res) => {
   return res.status(200).json(box);
 });
 
+// POST /api/products/add -> validate, normalize, prevent duplicates
 app.post("/api/products/add", (req, res) => {
   const incomingBox = req.body;
 
@@ -196,6 +203,7 @@ app.post("/api/products/add", (req, res) => {
   return res.status(201).json(normalizedBox);
 });
 
+// DELETE /api/products/:identifier -> delete by id or name
 app.delete("/api/products/:identifier", (req, res) => {
   const { identifier } = req.params;
   const normalizedIdentifier = normalizeString(identifier);
@@ -213,12 +221,12 @@ app.delete("/api/products/:identifier", (req, res) => {
   return res.sendStatus(204);
 });
 
+// Catch-all 404 for unknown routes
 app.use((req, res) => {
   res.status(404).render("404", {
-    pageTitle: "404 Not Found",
+    title: "404 - Not Found",
     identifier: req.originalUrl,
-    groupName: "Bigyan & Sushil",
-    year: new Date().getFullYear(),
+    currentYear: new Date().getFullYear(),
   });
 });
 

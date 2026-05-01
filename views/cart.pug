@@ -1,12 +1,46 @@
 extends layout
 
 block content
-  h2 Shopping Cart
-  .card
-    ul
-      li Starter Surprise - Quantity: 1 - $24.99
-      li Collector Chaos - Quantity: 2 - $39.99
-      li Cozy Mystery - Quantity: 1 - $29.99
-    p
-      strong Total:
-      |  $134.96
+  section.page-heading
+    span.section-tag Cart
+    h2 Shopping Cart
+    p A static mockup of a future shopping cart experience.
+
+  section.cart-layout
+    .cart-card
+      table.cart-table
+        thead
+          tr
+            th Item
+            th Quantity
+            th Price
+            th Subtotal
+        tbody
+          tr
+            td Starter Surprise
+            td 1
+            td $24.99
+            td $24.99
+          tr
+            td Collector Chaos
+            td 2
+            td $39.99
+            td $79.98
+          tr
+            td Cozy Mystery
+            td 1
+            td $29.99
+            td $29.99
+
+    aside.cart-summary
+      h3 Order Summary
+      .summary-row
+        span Items
+        span 4
+      .summary-row
+        span Shipping
+        span Free
+      .summary-row.total
+        span Total
+        span $134.96
+      a.btn.btn-primary(href="/products") Continue Shopping

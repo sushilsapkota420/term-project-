@@ -2,13 +2,20 @@ doctype html
 html(lang="en")
   head
     meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title #{pageTitle} | Mystery Box Store
-    link(rel="stylesheet" href="/css/style.css")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title || "Mystery Box Store"}
+    link(rel="preconnect", href="https://fonts.googleapis.com")
+    link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap", rel="stylesheet")
+    link(rel="stylesheet", href="/css/style.css")
   body
-    nav.navbar
-      .container
-        h1.logo Mystery Box Store
+    header.site-header
+      nav.navbar.container
+        a.brand(href="/")
+          span.brand-badge ✦
+          .brand-text
+            h1 Mystery Box Store
+            p Surprise in every box
         ul.nav-links
           li
             a(href="/") Home
@@ -21,9 +28,13 @@ html(lang="en")
           li
             a(href="/profile") Profile
 
-    main.container
-      block content
+    main.page-shell
+      .container
+        block content
 
     footer.footer
-      .container
-        p #{groupName} © #{year}
+      .container.footer-content
+        div
+          h3 Mystery Box Store
+          p Built for CSC 317 by Bigyan Shrestha & Sushil Sapkota
+        p.footer-copy © #{currentYear}

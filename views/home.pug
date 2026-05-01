@@ -2,6 +2,19 @@ extends layout
 
 block content
   section.hero
-    h2 Welcome to the Mystery Box Store
-    p Discover fun and unique mystery boxes with different themes like gaming, anime, and self-care.
-    a.button(href="/products") Browse Products
+    .hero-text
+      span.hero-tag Featured Student Project
+      h2 Discover your next surprise
+      p
+        | Explore themed mystery boxes packed with fun collectibles, cozy items,
+        | and unexpected favorites. Browse our collection and find the perfect box.
+      .hero-actions
+        a.btn.btn-primary(href="/products") Shop Mystery Boxes
+        a.btn.btn-secondary(href="/profile") View Profile Mockup
+    .hero-card
+      h3 Popular Themes
+      ul.hero-list
+        li Gaming
+        li Anime
+        li Self-Care
+        li Collector Favorites

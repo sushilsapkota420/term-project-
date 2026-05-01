@@ -1,18 +1,23 @@
 extends layout
 
 block content
-  h2= box.name
-  .card
-    p
-      strong ID:
-      |  #{box.id}
-    p
-      strong Theme:
-      |  #{box.theme}
-    p
-      strong Price:
-      |  $#{box.price}
-    p
-      strong Stock:
-      |  #{box.stock}
-    a.button(href="/products") Back to Products
+  section.detail-layout
+    .detail-card
+      span.section-tag Product Details
+      h2= product.name
+      p.detail-price $#{product.price.toFixed(2)}
+
+      .detail-list
+        .detail-item
+          span.label ID
+          span.value= product.id
+        .detail-item
+          span.label Theme
+          span.value= product.theme
+        .detail-item
+          span.label Stock Quantity
+          span.value= product.stock
+
+      .detail-actions
+        a.btn.btn-primary(href="/products") Back to Products
+        a.btn.btn-secondary(href="/cart") Go to Cart

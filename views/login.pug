@@ -1,13 +1,19 @@
 extends layout
 
 block content
-  .form-wrapper
-    h2 Login
-    form.login-form(action="/login" method="POST")
-      label(for="username") Username
-      input#username(type="text" name="username" required)
+  section.auth-wrapper
+    .auth-card
+      span.section-tag Account
+      h2 Login
+      p.auth-subtitle This is a mock login form for a future phase.
 
-      label(for="password") Password
-      input#password(type="password" name="password" required)
+      form.login-form(action="/login", method="POST")
+        .form-group
+          label(for="username") Username
+          input#username(type="text", name="username", placeholder="Enter username", required)
 
-      button.button(type="submit") Log In
+        .form-group
+          label(for="password") Password
+          input#password(type="password", name="password", placeholder="Enter password", required)
+
+        button.btn.btn-primary(type="submit") Log In

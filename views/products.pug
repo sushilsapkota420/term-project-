@@ -1,21 +1,18 @@
 extends layout
 
 block content
-  h2 All Mystery Boxes
+  section.page-heading
+    span.section-tag Catalog
+    h2 Our Mystery Boxes
+    p Browse all available mystery boxes in our collection.
+
   .product-grid
-    each box in boxes
-      .card
-        h3= box.name
-        p
-          strong ID:
-          |  #{box.id}
-        p
-          strong Theme:
-          |  #{box.theme}
-        p
-          strong Price:
-          |  $#{box.price}
-        p
-          strong Stock:
-          |  #{box.stock}
-        a.button(href=`/products/${box.id}`) View Details
+    each product in products
+      article.product-card
+        .product-card-top
+          span.product-theme= product.theme
+          span.stock-badge In Stock: #{product.stock}
+        h3= product.name
+        p.product-id ID: #{product.id}
+        p.product-price $#{product.price.toFixed(2)}
+        a.btn.btn-primary(href=`/products/${product.id}`) View Details
