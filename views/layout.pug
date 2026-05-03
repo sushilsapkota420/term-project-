@@ -3,38 +3,37 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title #{title || "Mystery Box Store"}
-    link(rel="preconnect", href="https://fonts.googleapis.com")
-    link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
-    link(href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap", rel="stylesheet")
+    title= title || "Mystery Box Store"
     link(rel="stylesheet", href="/css/style.css")
+
   body
     header.site-header
-      nav.navbar.container
+      .container.navbar
         a.brand(href="/")
-          span.brand-badge ✦
-          .brand-text
+          .brand-icon 🎁
+          .brand-copy
             h1 Mystery Box Store
-            p Surprise in every box
-        ul.nav-links
-          li
-            a(href="/") Home
-          li
-            a(href="/products") Products
-          li
-            a(href="/cart") Cart
-          li
-            a(href="/login") Login
-          li
-            a(href="/profile") Profile
+            p Premium surprise boxes
+
+        nav.nav-menu
+          a(href="/") Home
+          a(href="/products") Products
+          a(href="/cart") Cart
+          a(href="/login") Login
+          a(href="/profile") Profile
 
     main.page-shell
       .container
         block content
 
-    footer.footer
-      .container.footer-content
+    footer.site-footer
+      .container.footer-grid
         div
-          h3 Mystery Box Store
-          p Built for CSC 317 by Bigyan Shrestha & Sushil Sapkota
-        p.footer-copy © #{currentYear}
+          h2 Mystery Box Store
+          p CSC 317 Group Project
+          p Bigyan Shrestha & Sushil Sapkota © #{currentYear}
+        div
+          h3 Quick Links
+          a(href="/products") Products
+          a(href="/cart") Cart
+          a(href="/login") Login

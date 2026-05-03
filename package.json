@@ -1,7 +1,7 @@
 {
   "name": "mystery-box-rest-api",
   "version": "1.0.0",
-  "description": "CSC 317 group project in-memory REST API for mystery boxes",
+  "description": "CSC 317 group project mystery box store with Pug views and SQLite database",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.1.0",
-    "pug": "^3.0.4"
+    "pug": "^3.0.3",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   }
 }

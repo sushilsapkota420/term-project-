@@ -1,23 +1,24 @@
 extends layout
 
 block content
-  section.detail-layout
-    .detail-card
-      span.section-tag Product Details
-      h2= product.name
-      p.detail-price $#{product.price.toFixed(2)}
+  section.detail-card
+    span.eyebrow Product Details
+    h2= product.name
+    p.detail-price $#{product.price.toFixed(2)}
 
-      .detail-list
-        .detail-item
-          span.label ID
-          span.value= product.id
-        .detail-item
-          span.label Theme
-          span.value= product.theme
-        .detail-item
-          span.label Stock Quantity
-          span.value= product.stock
+    .detail-list
+      .detail-row
+        span Product ID
+        strong= product.id
 
-      .detail-actions
-        a.btn.btn-primary(href="/products") Back to Products
-        a.btn.btn-secondary(href="/cart") Go to Cart
+      .detail-row
+        span Theme
+        strong= product.theme
+
+      .detail-row
+        span Stock
+        strong #{product.stock} available
+
+    .button-row
+      a.btn.btn-primary(href="/products") Back to Products
+      a.btn.btn-secondary(href="/cart") View Cart

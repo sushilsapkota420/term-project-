@@ -2,19 +2,34 @@ extends layout
 
 block content
   section.hero
-    .hero-text
-      span.hero-tag Featured Student Project
-      h2 Discover your next surprise
+    .hero-content
+      span.eyebrow New Mystery Drops
+      h2 Find the perfect surprise box.
       p
-        | Explore themed mystery boxes packed with fun collectibles, cozy items,
-        | and unexpected favorites. Browse our collection and find the perfect box.
-      .hero-actions
-        a.btn.btn-primary(href="/products") Shop Mystery Boxes
-        a.btn.btn-secondary(href="/profile") View Profile Mockup
-    .hero-card
-      h3 Popular Themes
-      ul.hero-list
-        li Gaming
-        li Anime
-        li Self-Care
-        li Collector Favorites
+        | Shop mystery boxes filled with themed items for gaming, anime,
+        | self-care, collectibles, and more.
+
+      .button-row
+        a.btn.btn-primary(href="/products") Browse Products
+        a.btn.btn-secondary(href="/cart") View Cart
+
+    .hero-panel
+      h3 Why shop with us?
+      ul.check-list
+        li Curated themed boxes
+        li Affordable surprise products
+        li Database-backed inventory
+        li Fast local project demo
+
+  section.feature-grid
+    article.feature-card
+      h3 Gaming Boxes
+      p Discover collectibles, accessories, and surprise gaming items.
+
+    article.feature-card
+      h3 Anime Boxes
+      p Mystery products for anime fans and collectors.
+
+    article.feature-card
+      h3 Self-Care Boxes
+      p Cozy items for relaxing, gifting, and daily comfort.

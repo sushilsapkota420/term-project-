@@ -1,54 +1,21 @@
 const express = require("express");
 const path = require("path");
+const setupDb = require("./db/database");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+let db;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
-let mysteryBoxes = [
-  {
-    id: "box-001",
-    name: "starter surprise",
-    theme: "gaming",
-    price: 24.99,
-    stock: 10,
-  },
-  {
-    id: "box-002",
-    name: "collector chaos",
-    theme: "anime",
-    price: 39.99,
-    stock: 6,
-  },
-  {
-    id: "box-003",
-    name: "cozy mystery",
-    theme: "self-care",
-    price: 29.99,
-    stock: 14,
-  },
-];
-
-/* ---------------- Helper Functions ---------------- */
-
 function normalizeString(value) {
   return value.trim().toLowerCase();
-}
-
-function normalizeMysteryBox(box) {
-  return {
-    id: normalizeString(box.id),
-    name: normalizeString(box.name),
-    theme: normalizeString(box.theme),
-    price: Number(box.price),
-    stock: Number(box.stock),
-  };
 }
 
 function isValidString(value) {
@@ -63,69 +30,59 @@ function isValidStock(value) {
   return Number.isInteger(Number(value)) && Number(value) >= 0;
 }
 
-function isValidMysteryBox(box) {
+function isValidProduct(product) {
   return (
-    box &&
-    isValidString(box.id) &&
-    isValidString(box.name) &&
-    isValidString(box.theme) &&
-    isValidPrice(box.price) &&
-    isValidStock(box.stock)
+    product &&
+    isValidString(product.id) &&
+    isValidString(product.name) &&
+    isValidString(product.theme) &&
+    isValidPrice(product.price) &&
+    isValidStock(product.stock)
   );
 }
 
-function findMysteryBoxByIdentifier(identifier) {
-  const normalizedIdentifier = normalizeString(identifier);
+/* ---------------- View Routes ---------------- */
 
-  return mysteryBoxes.find(
-    (box) =>
-      box.id === normalizedIdentifier || box.name === normalizedIdentifier
-  );
-}
-
-function hasDuplicateMysteryBox(newBox) {
-  return mysteryBoxes.some(
-    (box) => box.id === newBox.id || box.name === newBox.name
-  );
-}
-
-/* ---------------- View Routes (HTML) ---------------- */
-
-// Home page
 app.get("/", (req, res) => {
-  res.render("home", { currentYear: new Date().getFullYear() });
-});
-
-// Products page
-app.get("/products", (req, res) => {
-  res.render("products", {
-    title: "All Products",
-    products: mysteryBoxes,
+  res.render("home", {
+    title: "Home",
     currentYear: new Date().getFullYear(),
   });
 });
 
-// Product detail page
-app.get("/products/:identifier", (req, res) => {
-  const { identifier } = req.params;
-  const box = findMysteryBoxByIdentifier(identifier);
+app.get("/products", async (req, res) => {
+  const products = await db.all("SELECT * FROM products");
 
-  if (!box) {
+  res.render("products", {
+    title: "Products",
+    products,
+    currentYear: new Date().getFullYear(),
+  });
+});
+
+app.get("/products/:identifier", async (req, res) => {
+  const identifier = normalizeString(req.params.identifier);
+
+  const product = await db.get(
+    "SELECT * FROM products WHERE id = ? OR name = ?",
+    [identifier, identifier]
+  );
+
+  if (!product) {
     return res.status(404).render("404", {
       title: "404 - Not Found",
-      identifier,
+      identifier: req.params.identifier,
       currentYear: new Date().getFullYear(),
     });
   }
 
-  return res.render("product-detail", {
-    title: box.name,
-    product: box,
+  res.render("product-detail", {
+    title: product.name,
+    product,
     currentYear: new Date().getFullYear(),
   });
 });
 
-// Login page
 app.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",
@@ -133,18 +90,29 @@ app.get("/login", (req, res) => {
   });
 });
 
-// Handle login form submission (dummy only)
 app.post("/login", (req, res) => {
-  const { username } = req.body;
-
   res.render("login-success", {
     title: "Login Success",
-    username: username || "guest",
+    username: req.body.username || "guest",
     currentYear: new Date().getFullYear(),
   });
 });
 
-// Static profile page
+app.get("/register", (req, res) => {
+  res.render("register", {
+    title: "Create Account",
+    currentYear: new Date().getFullYear(),
+  });
+});
+
+app.post("/register", (req, res) => {
+  res.render("login-success", {
+    title: "Account Created",
+    username: req.body.username || "new user",
+    currentYear: new Date().getFullYear(),
+  });
+});
+
 app.get("/profile", (req, res) => {
   res.render("profile", {
     title: "Profile",
@@ -152,76 +120,83 @@ app.get("/profile", (req, res) => {
   });
 });
 
-// Static cart page
 app.get("/cart", (req, res) => {
   res.render("cart", {
-    title: "Shopping Cart",
+    title: "Cart",
     currentYear: new Date().getFullYear(),
   });
 });
 
-/* ---------------- API Routes (JSON) ---------------- */
+/* ---------------- API Routes ---------------- */
 
-// HEAD /api/products -> return mystery box count in custom header
-app.head("/api/products", (req, res) => {
-  res.set("X-Mystery-Box-Count", String(mysteryBoxes.length));
+app.head("/api/products", async (req, res) => {
+  const result = await db.get("SELECT COUNT(*) AS count FROM products");
+  res.set("X-Mystery-Box-Count", String(result.count));
   res.status(200).end();
 });
 
-// GET /api/products -> return all mystery boxes
-app.get("/api/products", (req, res) => {
-  res.status(200).json(mysteryBoxes);
+app.get("/api/products", async (req, res) => {
+  const products = await db.all("SELECT * FROM products");
+  res.status(200).json(products);
 });
 
-// GET /api/products/:identifier -> return one mystery box by id or name
-app.get("/api/products/:identifier", (req, res) => {
-  const { identifier } = req.params;
-  const box = findMysteryBoxByIdentifier(identifier);
+app.get("/api/products/:identifier", async (req, res) => {
+  const identifier = normalizeString(req.params.identifier);
 
-  if (!box) {
-    return res.status(404).json({ error: "not found" });
-  }
-
-  return res.status(200).json(box);
-});
-
-// POST /api/products/add -> validate, normalize, prevent duplicates
-app.post("/api/products/add", (req, res) => {
-  const incomingBox = req.body;
-
-  if (!isValidMysteryBox(incomingBox)) {
-    return res.status(400).json({ error: "invalid mystery box data" });
-  }
-
-  const normalizedBox = normalizeMysteryBox(incomingBox);
-
-  if (hasDuplicateMysteryBox(normalizedBox)) {
-    return res.status(409).json({ error: "duplicate mystery box" });
-  }
-
-  mysteryBoxes.push(normalizedBox);
-  return res.status(201).json(normalizedBox);
-});
-
-// DELETE /api/products/:identifier -> delete by id or name
-app.delete("/api/products/:identifier", (req, res) => {
-  const { identifier } = req.params;
-  const normalizedIdentifier = normalizeString(identifier);
-
-  const index = mysteryBoxes.findIndex(
-    (box) =>
-      box.id === normalizedIdentifier || box.name === normalizedIdentifier
+  const product = await db.get(
+    "SELECT * FROM products WHERE id = ? OR name = ?",
+    [identifier, identifier]
   );
 
-  if (index === -1) {
+  if (!product) {
     return res.status(404).json({ error: "not found" });
   }
 
-  mysteryBoxes.splice(index, 1);
-  return res.sendStatus(204);
+  res.status(200).json(product);
 });
 
-// Catch-all 404 for unknown routes
+app.post("/api/products/add", async (req, res) => {
+  const incomingProduct = req.body;
+
+  if (!isValidProduct(incomingProduct)) {
+    return res.status(400).json({ error: "invalid product data" });
+  }
+
+  const product = {
+    id: normalizeString(incomingProduct.id),
+    name: normalizeString(incomingProduct.name),
+    theme: normalizeString(incomingProduct.theme),
+    price: Number(incomingProduct.price),
+    stock: Number(incomingProduct.stock),
+  };
+
+  try {
+    await db.run(
+      "INSERT INTO products (id, name, theme, price, stock) VALUES (?, ?, ?, ?, ?)",
+      [product.id, product.name, product.theme, product.price, product.stock]
+    );
+
+    res.status(201).json(product);
+  } catch (error) {
+    res.status(409).json({ error: "duplicate product" });
+  }
+});
+
+app.delete("/api/products/:identifier", async (req, res) => {
+  const identifier = normalizeString(req.params.identifier);
+
+  const result = await db.run(
+    "DELETE FROM products WHERE id = ? OR name = ?",
+    [identifier, identifier]
+  );
+
+  if (result.changes === 0) {
+    return res.status(404).json({ error: "not found" });
+  }
+
+  res.sendStatus(204);
+});
+
 app.use((req, res) => {
   res.status(404).render("404", {
     title: "404 - Not Found",
@@ -230,6 +205,14 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+setupDb()
+  .then((database) => {
+    db = database;
+
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to start server:", error);
+  });

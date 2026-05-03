@@ -2,17 +2,20 @@ extends layout
 
 block content
   section.page-heading
-    span.section-tag Catalog
-    h2 Our Mystery Boxes
-    p Browse all available mystery boxes in our collection.
+    span.eyebrow Store Catalog
+    h2 Mystery Boxes
+    p Choose from our current database inventory.
 
-  .product-grid
+  section.product-grid
     each product in products
       article.product-card
-        .product-card-top
-          span.product-theme= product.theme
-          span.stock-badge In Stock: #{product.stock}
+        .product-meta
+          span.badge= product.theme
+          span.stock #{product.stock} left
+
         h3= product.name
-        p.product-id ID: #{product.id}
-        p.product-price $#{product.price.toFixed(2)}
+        p.product-id= product.id
+
+        .product-price $#{product.price.toFixed(2)}
+
         a.btn.btn-primary(href=`/products/${product.id}`) View Details
